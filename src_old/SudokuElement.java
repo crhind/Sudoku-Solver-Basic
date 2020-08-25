@@ -4,15 +4,15 @@ import java.util.Set;
 public class SudokuElement {
     private Integer value;
     private Set<Integer> potentialValues;
-    private Set<SudokuElement> neighbours;
+    private Set<SudokuElement> peers;
 
     public SudokuElement(Set<Integer> potentialValues){
         this.value = null;
         this.potentialValues = new HashSet<>(potentialValues);
-        this.neighbours = new HashSet<>();
+        this.peers = new HashSet<>();
     }
 
-    public void removePotentialValues(Integer remove){
+    public void removePotentialValue(Integer remove){
         potentialValues.remove(value);
     }
 
@@ -22,12 +22,17 @@ public class SudokuElement {
 
     public void setValue(Integer value){
         this.value = value;
-        for(SudokuElement neighbour : neighbours){
-            neighbour.removePotentialValues(value);
+        potentialValues = new HashSet<>();
+        for(SudokuElement peer : peers){
+            peer.removePotentialValue(value);
         }
     }
 
-    public void addNeighbout(SudokuElement neighbour){
-        neighbours.add(neighbour);
+    public void setPeers(Set<SudokuElement> peers){
+        this.peers = peers;
+    }
+
+    public Integer getValue(){
+        return value;
     }
 }

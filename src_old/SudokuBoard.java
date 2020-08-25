@@ -91,7 +91,13 @@ public class SudokuBoard extends Board{
                 if(j%3 == 0){
                     System.out.print("  |");
                 }
-                System.out.print("  " + this.getElement(i,j));
+                int value = this.getElement(i,j).getValue();
+                if(value == 0){
+                    System.out.print("  .");
+                }else{
+                    System.out.print("  " + value);
+                }
+
             }
             System.out.println("  |");
         }
