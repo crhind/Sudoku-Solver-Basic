@@ -11,7 +11,7 @@ class Element():
     def __hash__(self) -> int:
         return hash(self.id)
 
-    def __eq__(self, other: Type[Element]) -> bool:
+    def __eq__(self, other: 'Element') -> bool:
         if self.id == other.id:
             return True
         return False
@@ -46,5 +46,8 @@ class Element():
         for neighbour in self.neighbours:
             neighbour.remove(value)
         
-    def __str__(self):
+    def __repr__(self):
         return "ID: {}, Value: {}, Neighbour: {}".format(self.id, self.value, len(self.neighbours))
+
+    def __str__(self):
+        return "{}".format(self.value)
