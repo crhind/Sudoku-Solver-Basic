@@ -5,8 +5,8 @@ class Element():
         self.neighbours = {}
         self._id = id
         self._potentials = {1,2,3,4,5,6,7,8,9}
-        self.value = -1
-        self.visited = True
+        self.value = 0
+        self.visited = False
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -27,7 +27,7 @@ class Element():
     @property
     def found(self) -> bool:
         return self.found
-
+    
     def contains(self, value: int) -> bool:
         if any([True for neighbour in neighbours if value == neighbour.value]):
             return False
@@ -39,12 +39,16 @@ class Element():
             print("{} removed as potential from {}".format(value, self.id))
 
     def assign(self, value: int) -> None:
-        if not len(self.potentials) == 1:
-            print("Warning: More than 1 potential value")
+        # if not len(self.potentials) == 1:
+            # print("Warning: More than 1 potential value")
         self.value = value
         self.visited = True
         for neighbour in self.neighbours:
+            print(neighbour)
             neighbour.remove(value)
+
+    def add_neighbour(self, neighbour: 'Element') -> None:
+        self.neighbours[neighbour.id] = neighbour
         
     def __repr__(self):
         return "ID: {}, Value: {}, Neighbour: {}".format(self.id, self.value, len(self.neighbours))
