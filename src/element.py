@@ -51,7 +51,7 @@ class Element():
         self.neighbours[neighbour.id] = neighbour
         
     def __repr__(self):
-        return "ID: {}, Value: {}, Neighbour: {}".format(self.id, self.value, len(self.neighbours))
+        return "ID: {}, Value: {}, Neighbour: {}\n".format(self.id, self.value, len(self.neighbours))
 
     def __str__(self):
         return "{}".format(self.value)

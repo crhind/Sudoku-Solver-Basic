@@ -25,21 +25,42 @@ class Game:
             return True
         return False
 
-    '''
-    Loads the graph into the game. Doesnt sort out the actual values.
-    '''
-    def initialise(self, adjList="adjacency_list.txt") -> None:
+    def initialise(self, adjList="./adjacency_list.txt"):
         with open(adjList, "r") as f:
             lines = f.readlines()
-            for line in lines:
-                adj = line.split(":")
-                element = Element(adj[0])
-                for key in adj[1].split(","):
-                    if key in self.elements:
-                        element.add_neighbours = self.elements[key]
-                    else:
-                        element.add_neighbours = Element(key)
-                self.elements[element.id] = element
+            [self.addElement(line) for line in lines]
+            
+            # for line in lines:
+            #	self.addElement(line)
+
+    def addElement(self, line: str):
+        entry = line.split(":")
+        key_str = entry[0]
+        if not key_str in self.elements:
+            self.elements[key_str] = Element(key_str)
+
+        for neighbour_str in entry[1].split(","):
+            if not neighbour_str in self.elements:
+                neighbour=Element(neighbour_str)
+                self.elements[neighbour.id] = neighbour
+                self.elements[key_str].add_neighbour(neighbour)
+                neighbour.add_neighbour(self.elements[key_str])
+
+    # '''
+    # Loads the graph into the game. Doesnt sort out the actual values.
+    # '''
+    # def initialise(self, adjList="adjacency_list.txt") -> None:
+    #     with open(adjList, "r") as f:
+    #         lines = f.readlines()
+    #         for line in lines:
+    #             adj = line.split(":")
+    #             element = Element(adj[0])
+    #             for key in adj[1].split(","):
+    #                 if key in self.elements:
+    #                     element.add_neighbours = self.elements[key]
+    #                 else:
+    #                     element.add_neighbours = Element(key)
+    #             self.elements[element.id] = element
     
     def fillGame(self, url: str) -> None:
         with open(url) as f:
@@ -68,20 +89,23 @@ class Game:
 find min
 if min
 '''
-def solve(graph: Type[Game]):
-    min_element = graph.find_min()
-    if not min_element:        
-        graph.show_game()
-        print("\n\n")
-        return
-    else:
-        for potential in min_element.potentials:
-            min_element.assign(potential)
-            solve(graph)
+def solve(graph):
+	graph.show_game()
+	_solve(graph)
+	graph.show_game()
+
+def _solve(graph):
+	min_ = graph.find_min()
+	if not min_:
+		return
+	for potential in min_.potentials:
+		min_.assign(potential)
+		solve(graph)
             
 if __name__ == "__main__":
     game = Game()
     game.initialise()
+    print(game.elements)
     game.fillGame("./test_game.txt")
     game.show_game()
     solve(game)
