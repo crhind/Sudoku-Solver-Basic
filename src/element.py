@@ -1,4 +1,5 @@
 from typing import Set, Type
+from Exceptions import *
 
 class Element():
     def __init__(self, id):
@@ -12,6 +13,8 @@ class Element():
         return hash(self.id)
 
     def __eq__(self, other: 'Element') -> bool:
+        if other == None:
+            return False
         if self.id == other.id:
             return True
         return False
@@ -29,29 +32,35 @@ class Element():
         return self.found
     
     def contains(self, value: int) -> bool:
-        if any([True for neighbour in neighbours if value == neighbour.value]):
+        if any([True for neighbour in self.neighbours if value == neighbour.value]):
             return False
         return True
 
-    def remove_potential(self, value: int) -> None:
+    def remove_potential(self, value: int) -> bool:
         if value in self.potentials:
             self.potentials.remove(value)
             print("{} removed as potential from {}".format(value, self.id))
+            if len(self.potentials) == 1:
+                self.assign(list(self.potentials)[0])
+            return True
+        return False
 
     def assign(self, value: int) -> None:
-        # if not len(self.potentials) == 1:
-            # print("Warning: More than 1 potential value")
+        if not value in self.potentials:
+            raise NotAssignableException("Cannot assign value that is not in elements potential values.")
+
         self.value = value
         self.visited = True
-        for neighbour in self.neighbours:
-            print(neighbour)
-            neighbour.remove(value)
+        self._potentials = {}
+        for _ , neighbour in self.neighbours.items():
+            neighbour.remove_potential(value)
+        return True
 
     def add_neighbour(self, neighbour: 'Element') -> None:
         self.neighbours[neighbour.id] = neighbour
         
     def __repr__(self):
-        return "ID: {}, Value: {}, Neighbour: {}\n".format(self.id, self.value, len(self.neighbours))
+        return "ID: {}, Value: {}, Potentials {}, Neighbour: {}\n".format(self.id, self.value, self.potentials, len(self.neighbours))
 
     def __str__(self):
         return "{}".format(self.value)

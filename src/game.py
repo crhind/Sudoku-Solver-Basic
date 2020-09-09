@@ -1,5 +1,6 @@
 from typing import *
 from element import Element
+from Exceptions import *
 
 class Game:
     def __init__(self):
@@ -19,6 +20,7 @@ class Game:
                 hold = self.elements["{}{}".format(i,j)]
                 print(hold, end=" ")
             print()
+        print("\n")
 
     def evaluate(self):
         if any([True for element in self.elements if element.potentials.found]):
@@ -33,18 +35,30 @@ class Game:
             # for line in lines:
             #	self.addElement(line)
 
+    """
+    Example.
+    54:55,58,59,57,24,34,74,53,14,52,94,84,66,45,46,65,56,44,64,51
+    """
     def addElement(self, line: str):
+        line = line.rstrip('\r\n')
         entry = line.split(":")
         key_str = entry[0]
         if not key_str in self.elements:
-            self.elements[key_str] = Element(key_str)
+            key = Element(key_str)
+            self.elements[key.id] = key
+        else: 
+            key = self.elements[key_str]
 
         for neighbour_str in entry[1].split(","):
             if not neighbour_str in self.elements:
-                neighbour=Element(neighbour_str)
+                neighbour = Element(neighbour_str)
                 self.elements[neighbour.id] = neighbour
-                self.elements[key_str].add_neighbour(neighbour)
-                neighbour.add_neighbour(self.elements[key_str])
+            else:
+                neighbour = self.elements[neighbour_str]
+
+            key.add_neighbour(neighbour)
+            neighbour.add_neighbour(key)
+
 
     # '''
     # Loads the graph into the game. Doesnt sort out the actual values.
@@ -69,7 +83,7 @@ class Game:
                 for j in range(1,9):
                     if not game_string[(i-1) * 9 + j] == "0":
                         key = "{}{}".format(i,j)
-                        self.elements[key].assign(game_string[(i-1) * 9 + j])
+                        self.elements[key].assign(int(game_string[(i-1) * 9 + j]))
 
     def find_mmin(self) -> Type[Element]:
         return min(self.elements, key=lambda x: len(x.potentials))
@@ -96,17 +110,20 @@ def solve(graph):
 
 def _solve(graph):
 	min_ = graph.find_min()
-	if not min_:
+	if not min_ == None:
 		return
+
 	for potential in min_.potentials:
-		min_.assign(potential)
-		solve(graph)
+		if min_.assign(potential):
+		    _solve(graph)
             
 if __name__ == "__main__":
     game = Game()
     game.initialise()
+    print("Initialise")
     print(game.elements)
     game.fillGame("./test_game.txt")
+    print("fill game")
     game.show_game()
     solve(game)
 
