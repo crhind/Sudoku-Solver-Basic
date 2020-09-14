@@ -47,6 +47,7 @@ class Element():
 
     def assign(self, value: int) -> None:
         if not value in self.potentials:
+            print(self.__repr__())
             raise NotAssignableException("Cannot assign value that is not in elements potential values.")
 
         self.value = value

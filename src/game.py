@@ -86,7 +86,11 @@ class Game:
                         self.elements[key].assign(int(game_string[(i-1) * 9 + j]))
 
     def find_mmin(self) -> Type[Element]:
-        return min(self.elements, key=lambda x: len(x.potentials))
+        remaining_elements = [element for _,element in self.elements.items() if not element.visited]
+        if any(remaining_elements):
+            min_ = min(remaining_elements, key=lambda x: len(x.potentials))
+            return min_
+        return None
 
     def find_min(self) -> Type[Element]:
         min_ = 10
@@ -109,13 +113,13 @@ def solve(graph):
 	graph.show_game()
 
 def _solve(graph):
-	min_ = graph.find_min()
-	if not min_ == None:
-		return
-
-	for potential in min_.potentials:
-		if min_.assign(potential):
-		    _solve(graph)
+    min_ = graph.find_mmin()
+    print(min_)
+    if not min_ == None:
+        graph.show_game()
+        for potential in min_.potentials:
+            if min_.assign(potential):
+                _solve(graph)
             
 if __name__ == "__main__":
     game = Game()
