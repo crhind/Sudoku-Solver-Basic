@@ -39,20 +39,25 @@ class Element():
     def remove_potential(self, value: int) -> bool:
         if value in self.potentials:
             self.potentials.remove(value)
-            print("{} removed as potential from {}".format(value, self.id))
-            if len(self.potentials) == 1:
-                self.assign(list(self.potentials)[0])
+            # print("\t{} removed as potential from {}".format(value, self.id))
+            # if len(self.potentials) == 1:
+            #     print("element.py 44:", self.id, value)
+            #     self.assign(list(self.potentials)[0])
             return True
         return False
 
     def assign(self, value: int) -> None:
-        if not value in self.potentials:
-            print(self.__repr__())
-            raise NotAssignableException("Cannot assign value that is not in elements potential values.")
+        # if self.visited:
+        #     print("major fuck up here")
+
+        # if not value in self.potentials:
+        #     print("Exception caught: attempted assigned value:", value ,self.__repr__())
+            # raise NotAssignableException("Cannot assign value that is not in elements potential values.")
 
         self.value = value
         self.visited = True
         self._potentials = {}
+        # print("assigning {} to ID: {}".format(value, self.id))
         for _ , neighbour in self.neighbours.items():
             neighbour.remove_potential(value)
         return True

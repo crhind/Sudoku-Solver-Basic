@@ -2,6 +2,8 @@ from typing import *
 from element import Element
 from Exceptions import *
 
+import copy
+
 class Game:
     def __init__(self):
         self._elements = dict()
@@ -31,10 +33,9 @@ class Game:
         with open(adjList, "r") as f:
             lines = f.readlines()
             [self.addElement(line) for line in lines]
+        # for k,v in self.elements.items():
+        #     print(k, ": ", v.neighbours)
             
-            # for line in lines:
-            #	self.addElement(line)
-
     """
     Example.
     54:55,58,59,57,24,34,74,53,14,52,94,84,66,45,46,65,56,44,64,51
@@ -58,23 +59,6 @@ class Game:
 
             key.add_neighbour(neighbour)
             neighbour.add_neighbour(key)
-
-
-    # '''
-    # Loads the graph into the game. Doesnt sort out the actual values.
-    # '''
-    # def initialise(self, adjList="adjacency_list.txt") -> None:
-    #     with open(adjList, "r") as f:
-    #         lines = f.readlines()
-    #         for line in lines:
-    #             adj = line.split(":")
-    #             element = Element(adj[0])
-    #             for key in adj[1].split(","):
-    #                 if key in self.elements:
-    #                     element.add_neighbours = self.elements[key]
-    #                 else:
-    #                     element.add_neighbours = Element(key)
-    #             self.elements[element.id] = element
     
     def fillGame(self, url: str) -> None:
         with open(url) as f:
@@ -102,6 +86,9 @@ class Game:
                     curr = element
         return curr
 
+    def assign(self, id: str, potential: int):
+        self.elements[id].assign(potential)
+
 # TODO: here fix this crap function.
 '''
 find min
@@ -110,24 +97,30 @@ if min
 def solve(graph):
 	graph.show_game()
 	_solve(graph)
-	graph.show_game()
 
 def _solve(graph):
     min_ = graph.find_mmin()
-    print(min_)
-    if not min_ == None:
+    if min_ == None:
+        # print("game.py 103: ", min_)
         graph.show_game()
+        return True
+
+    if min_.potentials:
+        # print("Game.py 107:", min_.id, min_.potentials)
         for potential in min_.potentials:
-            if min_.assign(potential):
-                _solve(graph)
+            new_graph = copy.deepcopy(graph)
+            new_graph.assign(min_.id, potential)
+            if _solve(new_graph):
+                return True
+    return False
             
 if __name__ == "__main__":
     game = Game()
     game.initialise()
     print("Initialise")
-    print(game.elements)
     game.fillGame("./test_game.txt")
     print("fill game")
+    print(game.elements)
     game.show_game()
     solve(game)
 
